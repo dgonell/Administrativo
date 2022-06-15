@@ -25,8 +25,17 @@ class AllowFrontendRequests
 
     private function headers(): array
     {
+        $allowedOrigins = collect(explode(',', env('FRONTEND_URLS', env('FRONTEND_URL', 'http://localhost:5173'))))
+            ->map(fn (string $origin) => rtrim(trim($origin), '/'))
+            ->filter()
+            ->values();
+        $requestOrigin = rtrim((string) request()->headers->get('Origin'), '/');
+        $allowOrigin = $allowedOrigins->contains($requestOrigin)
+            ? $requestOrigin
+            : $allowedOrigins->first();
+
         return [
-            'Access-Control-Allow-Origin' => env('FRONTEND_URL', 'http://localhost:5173'),
+            'Access-Control-Allow-Origin' => $allowOrigin,
             'Access-Control-Allow-Methods' => 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
             'Access-Control-Allow-Headers' => 'Content-Type, Authorization, X-Requested-With, Accept',
             'Access-Control-Allow-Credentials' => 'true',

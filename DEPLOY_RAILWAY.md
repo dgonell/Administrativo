@@ -45,6 +45,7 @@ APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://TU-BACKEND.up.railway.app
 FRONTEND_URL=https://TU-FRONTEND.up.railway.app
+FRONTEND_URLS=https://TU-FRONTEND.up.railway.app
 
 APP_LOCALE=es
 APP_FALLBACK_LOCALE=es
@@ -89,7 +90,8 @@ Haz deploy del backend. El archivo `backend/railway.json` ejecuta:
 
 ```bash
 php artisan migrate --force
-php artisan db:seed --class=AccessControlSeeder --force
+php artisan db:seed --force
+php artisan storage:link --force
 php artisan serve --host=0.0.0.0 --port=$PORT
 ```
 
@@ -123,12 +125,15 @@ VITE_API_URL=https://TU-BACKEND.up.railway.app/api
 
 Railway usara `frontend/railway.json`.
 
+El frontend se compila con Vite y se sirve con `node server.js`, asi no depende de `vite preview` en produccion.
+
 ## 6. Conectar Frontend Y Backend
 
 Cuando Railway te de el dominio del frontend, vuelve al backend y actualiza:
 
 ```env
 FRONTEND_URL=https://TU-FRONTEND.up.railway.app
+FRONTEND_URLS=https://TU-FRONTEND.up.railway.app
 ```
 
 Luego redeploy del backend.
@@ -149,4 +154,4 @@ Railway redeployara los servicios conectados a GitHub.
 
 - Las fotos subidas a `storage` pueden perderse si Railway reinicia el contenedor. Para produccion real conviene configurar un volumen o usar S3/R2.
 - `ADMIN_PASSWORD` debe ser una clave fuerte. El seeder crea/actualiza el administrador inicial.
-- Si cambias el dominio del frontend, actualiza `FRONTEND_URL` en backend para evitar errores CORS.
+- Si cambias el dominio del frontend, actualiza `FRONTEND_URL` y `FRONTEND_URLS` en backend para evitar errores CORS. Si necesitas mas de un dominio, separalos con coma en `FRONTEND_URLS`.
