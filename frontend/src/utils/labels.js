@@ -1,0 +1,36 @@
+const LABELS = {
+  active: 'Activo',
+  resignation: 'Renuncia',
+  dismissal: 'Despedido',
+  inactive: 'Inactivo',
+  suspended: 'Suspendido',
+  retired: 'Retirado',
+  terminated: 'Despedido',
+  yes: 'Apto',
+  no: 'No apto',
+  review: 'En revision',
+  valid: 'Vigente',
+  pending: 'Pendiente',
+  expired: 'Vencido',
+  replaced: 'Reemplazado',
+  approved: 'Aprobado',
+  rejected: 'Rechazado',
+  open: 'Abierto',
+  reviewed: 'Revisado',
+  closed: 'Cerrado',
+  low: 'Baja',
+  medium: 'Media',
+  high: 'Alta',
+  critical: 'Critica',
+  contract_end: 'Fin de contrato',
+  abandonment: 'Abandono',
+  other: 'Otro',
+  clear: 'Sin infracciones',
+  with_fines: 'Con infracciones',
+  not_checked: 'No consultado',
+  manual_review_required: 'Revision manual',
+}
+
+export function labelFor(value) {
+  return LABELS[value] ?? value ?? 'Sin registrar'
+}
