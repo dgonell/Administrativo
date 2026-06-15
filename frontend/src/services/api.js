@@ -1,4 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api'
+const DEFAULT_API_URL =
+  typeof window !== 'undefined' && window.location.hostname.endsWith('.up.railway.app')
+    ? 'https://administrativo.up.railway.app/api'
+    : 'http://localhost:8000/api'
+const API_URL = import.meta.env.VITE_API_URL ?? DEFAULT_API_URL
 const API_ORIGIN = API_URL.replace(/\/api\/?$/, '')
 const TOKEN_KEY = 'administrativo_auth_token'
 const CACHE_PREFIX = 'administrativo_api_cache:'

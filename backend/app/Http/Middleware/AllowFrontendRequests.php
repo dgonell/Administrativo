@@ -30,7 +30,10 @@ class AllowFrontendRequests
             ->filter()
             ->values();
         $requestOrigin = rtrim((string) request()->headers->get('Origin'), '/');
-        $allowOrigin = $allowedOrigins->contains($requestOrigin)
+        $requestHost = parse_url($requestOrigin, PHP_URL_HOST);
+        $isRailwayOrigin = is_string($requestHost) && str_ends_with($requestHost, '.up.railway.app');
+        $isLocalOrigin = is_string($requestHost) && in_array($requestHost, ['localhost', '127.0.0.1'], true);
+        $allowOrigin = ($allowedOrigins->contains($requestOrigin) || $isRailwayOrigin || $isLocalOrigin)
             ? $requestOrigin
             : $allowedOrigins->first();
 
