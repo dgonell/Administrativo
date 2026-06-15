@@ -1,6 +1,6 @@
 const DEFAULT_API_URL =
   typeof window !== 'undefined' && window.location.hostname.endsWith('.up.railway.app')
-    ? 'https://administrativo.up.railway.app/api'
+    ? '/api'
     : 'http://localhost:8000/api'
 const API_URL = import.meta.env.VITE_API_URL ?? DEFAULT_API_URL
 const API_ORIGIN = API_URL.replace(/\/api\/?$/, '')
