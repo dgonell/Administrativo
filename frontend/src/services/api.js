@@ -45,6 +45,23 @@ function writeCache(path, data) {
   }
 }
 
+async function readJsonResponse(response) {
+  const contentType = response.headers.get('content-type') || ''
+
+  if (contentType.includes('application/json')) {
+    return response.json()
+  }
+
+  const body = await response.text().catch(() => '')
+  const isHtml = body.trimStart().startsWith('<!doctype') || body.trimStart().startsWith('<html')
+
+  if (isHtml) {
+    throw new Error('La API esta devolviendo HTML. Verifica que BACKEND_URL apunte al servicio backend en Railway.')
+  }
+
+  throw new Error(body || 'La API no devolvio una respuesta JSON valida.')
+}
+
 export function setAuthToken(token) {
   if ((token || '') !== authToken) clearApiCache()
 
@@ -93,7 +110,7 @@ async function request(path, options = {}) {
     }
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({}))
+      const error = await readJsonResponse(response).catch((readError) => ({ message: readError.message }))
       const message =
         error.code === 'database_connection_error'
           ? 'No hay conexion con la base de datos. Verifica que el servicio de MySQL este activo e intenta nuevamente.'
@@ -106,7 +123,7 @@ async function request(path, options = {}) {
       return null
     }
 
-    const data = await response.json()
+    const data = await readJsonResponse(response)
     if (shouldCache) writeCache(path, data)
     return data
   })()
