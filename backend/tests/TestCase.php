@@ -13,7 +13,7 @@ abstract class TestCase extends BaseTestCase
 
         $token = $this->postJson('/api/auth/login', [
             'email' => env('ADMIN_EMAIL', 'admin@administrativo.local'),
-            'password' => env('ADMIN_PASSWORD', 'Admin12345!'),
+            'password' => env('ADMIN_PASSWORD', '1234'),
         ])->json('token');
 
         $this->withHeader('Authorization', "Bearer {$token}");

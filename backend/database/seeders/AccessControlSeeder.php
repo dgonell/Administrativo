@@ -7,9 +7,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Support\PermissionRegistry;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class AccessControlSeeder extends Seeder
 {
@@ -85,21 +83,7 @@ class AccessControlSeeder extends Seeder
         $operatorRole->permissions()->sync($operatorPermissions);
 
         $adminEmail = env('ADMIN_EMAIL', 'admin@administrativo.local');
-        $adminPassword = env('ADMIN_PASSWORD');
-        $passwordFile = storage_path('app/admin-password.txt');
-
-        if (! $adminPassword && app()->runningUnitTests()) {
-            $adminPassword = 'Admin12345!';
-        }
-
-        if (! $adminPassword && File::exists($passwordFile)) {
-            $adminPassword = trim(File::get($passwordFile));
-        }
-
-        if (! $adminPassword) {
-            $adminPassword = Str::password(18);
-            File::put($passwordFile, $adminPassword);
-        }
+        $adminPassword = '1234';
 
         $admin = User::query()->firstOrCreate(
             ['email' => $adminEmail],
@@ -110,7 +94,7 @@ class AccessControlSeeder extends Seeder
             ]
         );
 
-        if (Hash::check('password', $admin->password)) {
+        if (! Hash::check($adminPassword, $admin->password)) {
             $admin->forceFill(['password' => Hash::make($adminPassword)])->save();
             $admin->accessTokens()->delete();
         }
