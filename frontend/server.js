@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 
 const root = join(fileURLToPath(new URL('.', import.meta.url)), 'dist')
 const port = Number(process.env.PORT || 4173)
-const host = process.env.HOST || '0.0.0.0'
+const host = '0.0.0.0'
 const backendUrl = (process.env.BACKEND_URL || process.env.VITE_API_URL || '').replace(/\/api\/?$/, '').replace(/\/$/, '')
 const indexPath = join(root, 'index.html')
 
@@ -98,7 +98,7 @@ async function proxyToBackend(request, response) {
   }
 }
 
-createServer((request, response) => {
+const server = createServer((request, response) => {
   const urlPath = request.url || '/'
 
   if (urlPath.startsWith('/api/') || urlPath === '/api' || urlPath.startsWith('/storage/')) {
@@ -121,6 +121,13 @@ createServer((request, response) => {
   })
 
   sendFile(responsePath, response)
-}).listen(port, host, () => {
+})
+
+server.on('error', (error) => {
+  console.error('Frontend server error:', error)
+  process.exitCode = 1
+})
+
+server.listen(port, host, () => {
   console.log(`Frontend listening on ${host}:${port}`)
 })
