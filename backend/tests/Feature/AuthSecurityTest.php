@@ -46,4 +46,19 @@ class AuthSecurityTest extends TestCase
             ->assertForbidden()
             ->assertJsonPath('code', 'permission_denied');
     }
+
+    public function test_user_password_validation_returns_translated_message(): void
+    {
+        $this->authenticate();
+
+        $this->postJson('/api/users', [
+            'name' => 'Usuario Prueba',
+            'email' => 'usuario.prueba@example.com',
+            'password' => '1234',
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('password')
+            ->assertJsonMissing(['password' => ['validation.min.string']])
+            ->assertJsonPath('errors.password.0', 'La contrasena debe tener al menos 8 caracteres.');
+    }
 }

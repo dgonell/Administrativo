@@ -99,18 +99,23 @@ class UserManagementController extends Controller
 
     private function validated(Request $request, ?User $user = null): array
     {
-        return $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user?->id)],
-            'password' => [$user ? 'nullable' : 'required', 'string', 'min:8'],
-            'is_active' => ['boolean'],
-            'must_change_password' => ['boolean'],
-            'role_ids' => ['array'],
-            'role_ids.*' => ['integer', Rule::exists('roles', 'id')],
-            'permission_overrides' => ['array'],
-            'permission_overrides.*.slug' => ['required', 'string', Rule::exists('permissions', 'slug')],
-            'permission_overrides.*.allowed' => ['required', 'boolean'],
-        ]);
+        return $request->validate(
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user?->id)],
+                'password' => [$user ? 'nullable' : 'required', 'string', 'min:8'],
+                'is_active' => ['boolean'],
+                'must_change_password' => ['boolean'],
+                'role_ids' => ['array'],
+                'role_ids.*' => ['integer', Rule::exists('roles', 'id')],
+                'permission_overrides' => ['array'],
+                'permission_overrides.*.slug' => ['required', 'string', Rule::exists('permissions', 'slug')],
+                'permission_overrides.*.allowed' => ['required', 'boolean'],
+            ],
+            [
+                'password.min' => 'La contrasena debe tener al menos :min caracteres.',
+            ],
+        );
     }
 
     private function syncAccess(User $user, array $data): void
